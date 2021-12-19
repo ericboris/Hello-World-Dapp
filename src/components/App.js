@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 import HelloWorld from '../abis/HelloWorld';
-import { Container, Form, ListGroup } from 'react-bootstrap';
+import { Container, Form } from 'react-bootstrap';
 
 class App extends Component {
     constructor(props) {
@@ -14,6 +14,7 @@ class App extends Component {
         this.setGreeting = this.setGreeting.bind(this);
         this.getGreeting = this.getGreeting.bind(this);
     }
+
     async componentDidMount() {
         await this.loadWeb3();
         await this.loadAccount();
@@ -21,19 +22,18 @@ class App extends Component {
     }
 
     async loadWeb3() {
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-            await window.ethereum.enable();
-        } else if (window.web3) {
-            window.web3 = new Web3(window.web3.currentProvider);
-            console.log('window.web3');
+        if (ethereum) {
+            window.web3 = new Web3(ethereum);
+        } else if (web3) {
+            window.web3 = new Web3(web3.currentProvider);
         } else {
-            window.alert('Non-Ethereum browser detected. Consider trying MetaMask.');
+            alert('Non-Ethereum browser detected. Consider trying MetaMask.');
         }
     }
 
     async loadAccount() {
-        const accounts = await web3.eth.getAccounts();
+        // Note: Throws unhandled error if user denies account access.
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         this.setState({ account: accounts[0] });
     }
 
@@ -44,14 +44,15 @@ class App extends Component {
             const newContract = new web3.eth.Contract(HelloWorld.abi, networkData.address);
             this.setState({ contract: newContract });
         } else {
-            window.alert('Contract not deployed.');
+            alert('Contract not deployed.');
         }
         this.getGreeting();
         this.setState({ loading: false });
     }
 
     async getGreeting() {
-        this.setState({ greeting: await this.state.contract.methods.greeting().call() });
+        const greeting = await this.state.contract.methods.greeting().call();
+        this.setState({ greeting });
     }
 
     setGreeting(content) {
@@ -67,7 +68,7 @@ class App extends Component {
     render() {
         return (
             <Container>
-                <Form onSubmit={(event) => {
+               <Form onSubmit={(event) => {
                     event.preventDefault();
                     this.setGreeting(this.greeting.value);
                     console.log(this.state.greeting);

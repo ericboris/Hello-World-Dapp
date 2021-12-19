@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Web3 from 'web3';
 import HelloWorld from '../abis/HelloWorld';
 import { Container, Form } from 'react-bootstrap';
 
@@ -22,6 +21,7 @@ class App extends Component {
     }
 
     async loadWeb3() {
+        const Web3 = require('web3');
         if (ethereum) {
             window.web3 = new Web3(ethereum);
         } else if (web3) {

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import HelloWorld from '../abis/HelloWorld';
 import { Container, Form } from 'react-bootstrap';
 
 class App extends Component {
@@ -38,6 +37,7 @@ class App extends Component {
     }
 
     async loadContract() {
+        let HelloWorld = require('../abis/HelloWorld');
         const networkId = await web3.eth.net.getId();
         const networkData = HelloWorld.networks[networkId];
         if (networkData) {
